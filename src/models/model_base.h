@@ -87,6 +87,8 @@ void load_model(Model& model, const s::string& model_file, const s::string& opti
   t::load(model.optimizer, optimizer_file);
 }
 
+//TODO: training is not the same for all models
+//TODO: add l2 regularization on model params
 template <typename Model>
 float train(Model& model, ZeroExperience& exp){
   t::Tensor visit_sums = t::sum(exp.visit_counts, -1).reshape({exp.visit_counts.size(0), 1});

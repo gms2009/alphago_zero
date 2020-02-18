@@ -1,5 +1,5 @@
-#ifndef RLGAMES_ZERO_MODEL
-#define RLGAMES_ZERO_MODEL
+#ifndef RLGAMES_ZERO_MODEL_SMALL
+#define RLGAMES_ZERO_MODEL_SMALL
 
 #include <vector>
 
@@ -134,4 +134,4 @@ TORCH_MODULE(ZeroModelSmall);
 
 } // rlgames
 
-#endif//RLGAMES_ZERO_MODEL
+#endif//RLGAMES_ZERO_MODEL_SMALL

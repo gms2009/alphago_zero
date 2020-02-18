@@ -1,7 +1,8 @@
-add_executable(zero_9small_selfplay zero_9small_selfplay.cpp)
-
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+#Zero9 Small
+add_executable(zero_9small_selfplay zero_9small_selfplay.cpp)
 
 target_link_libraries(zero_9small_selfplay "${TORCH_LIBRARIES}")
 set_property(TARGET zero_9small_selfplay PROPERTY CXX_STANDARD 17)

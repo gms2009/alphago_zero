@@ -12,10 +12,10 @@
 #include <go_zero_encoder.h>
 #include <zero_episodic_exp.h>
 
-#include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
-#include <rapidjson/ostreamwrapper.h>
-#include <rapidjson/writer.h>
+#include <document.h>
+#include <istreamwrapper.h>
+#include <ostreamwrapper.h>
+#include <writer.h>
 
 #include <torch/torch.h>
 

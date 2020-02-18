@@ -10,3 +10,6 @@ using uint64 = uint64_t;
 
 template <typename T>
 using init_list = std::initializer_list<T>;
+
+// stupid MSVC compatibility
+#define not !

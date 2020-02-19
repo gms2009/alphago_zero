@@ -12,4 +12,6 @@ template <typename T>
 using init_list = std::initializer_list<T>;
 
 // stupid MSVC compatibility
+#ifdef _MSC_VER
 #define not !
+#endif

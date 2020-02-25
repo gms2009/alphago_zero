@@ -9,6 +9,7 @@
 
 #include <type_alias.h>
 #include <types.h>
+#include <input_parser.h>
 #include <go_types.h>
 #include <splitmix.h>
 #include <null_distribution.h>
@@ -29,57 +30,11 @@ namespace R = rlgames;
 constexpr ubyte SZ= 9;
 
 R::Move parse_human_move(){
-  R::Move ret(R::M::Pass);
-  s::string input;
-
   do {
-    s::cout << "-- ";
-    s::getline(s::cin, input);
-    if (input.size() == 0) // pass
-      break;
-    if (input.size() < 2){
-      s::cout << "Invalid human input. retrying." << s::endl;
-      continue;
-    }
-    char      colstr = input[0];
-    s::string rowstr = input.substr(1);
-    int colidx, rowidx;
-    if (s::isupper(colstr)){
-      if (colstr == 'I'){
-        s::cout << "I column does not exist. retrying" << s::endl;
-        continue;
-      }
-      colidx = colstr - 'A';
-      if (colstr > 'I')
-        colidx -= 1;
-    } else {
-      if (colstr == 'i'){
-        s::cout << "i column does not exist. retrying" << s::endl;
-        continue;
-      }
-      colidx = colstr - 'a';
-      if (colstr > 'i')
-        colidx -= 1;
-    }
-    try {
-      rowidx = s::stoi(rowstr) - 1;
-    } catch (s::invalid_argument& err){
-      s::cout << "Invalid row number: " << rowstr << ". Need to be a positive integer. retrying." << s::endl;
-      continue;
-    }
-    if (colidx < 0 || colidx >= SZ){
-      s::cout << "Invalid col number: " << colstr << ". retrying." << s::endl;
-      continue;
-    }
-    if (rowidx < 0 || rowidx >= SZ){
-      s::cout << "Invalid row number: " << rowstr << ". retrying." << s::endl;
-      continue;
-    }
-    ret = R::Move(R::M::Play, R::Pt(rowidx, colidx));
-    break;
+    s::optional<R::Move> opt_move = R::get_board_index_from_stdio(SZ);
+    if (opt_move) return opt_move.value();
+    else          s::cout << "Unable to parse input. try again" << s::endl;
   } while (true);
-
-  return ret;
 }
 
 int main(int argc, const char* argv[]){
@@ -125,7 +80,7 @@ int main(int argc, const char* argv[]){
     1E-5F //learning_rate
   );
 
-  R::load_model(model_container, model_file, optimizer_file);
+  R::load_model(model_container, model_file, optimizer_file, device);
 
   model_container.model->to(device);
 
@@ -133,7 +88,7 @@ int main(int argc, const char* argv[]){
     model_container,
     device,
     3200,   /*max expansion*/
-    0.0,    /*exploration factor*/
+    0.2,    /*exploration factor*/
     1000.,  /*dirichlet distribution alpha*/
     0.,     /*noise factor*/
     rand()  /*random seed*/

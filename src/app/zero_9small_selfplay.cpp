@@ -76,12 +76,13 @@ int main(int argc, const char* argv[]){
     R::ZeroModelSmall(state_size, action_size, R::load_model_option<R::ZeroModelSmallOptions>(model_config_file)),
     s::move(state_encoder),
     s::move(action_encoder),
-    1E-5F //learning_rate
+    1E-5F, //learning_rate
+    1E-5F  //weight decay
   );
 
   if (s::filesystem::exists(model_file) && s::filesystem::exists(optimizer_file)){
     s::cout << "Using saved model and optimizer parameters" << s::endl;
-    R::load_model(model_container, model_file, optimizer_file);
+    R::load_model(model_container, model_file, optimizer_file, device);
   }
 
   model_container.model->to(device);
@@ -108,6 +109,7 @@ int main(int argc, const char* argv[]){
   );
 
   s::vector<float> losses;
+  s::vector<uint> step_counts;
   uint64 a1_wins = 0, a2_wins = 0, tie_count = 0;
 
   uint reporting_interval = s::max(episodes / 10U, 1U);
@@ -124,6 +126,7 @@ int main(int argc, const char* argv[]){
       R::Player turn = R::Player::Black;
 
       auto gstart = c::high_resolution_clock::now();
+      uint step_count = 0;
 
       while (not state.is_over()){
         R::Move move(R::M::Pass);
@@ -133,9 +136,11 @@ int main(int argc, const char* argv[]){
         default: assert(false);
         }
         state.apply_move(move);
+        step_count++;
         turn = R::other_player(turn);
       }
 
+      step_counts.push_back(step_count);
       R::Player winner = state.winner();
       switch (winner){
       case R::Player::Black:
@@ -176,5 +181,5 @@ int main(int argc, const char* argv[]){
 
   R::save_model(model_container, model_file, optimizer_file);
 
-  R::save_training_result(result_file, losses, a1_wins, a2_wins, tie_count);
+  R::save_training_result(result_file, losses, step_counts, a1_wins, a2_wins, tie_count);
 }

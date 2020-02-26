@@ -49,3 +49,55 @@ target_link_libraries(vs_zero_9small encoders)
 target_link_libraries(vs_zero_9small experience)
 target_link_libraries(vs_zero_9small models)
 target_link_libraries(vs_zero_9small agents)
+
+#Zero13 Small
+add_executable(zero_13small_selfplay zero_9small_selfplay.cpp)
+
+target_link_libraries(zero_13small_selfplay "${TORCH_LIBRARIES}")
+set_property(TARGET zero_13small_selfplay PROPERTY CXX_STANDARD 17)
+
+if (MSVC)
+  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+  add_custom_command(TARGET zero_13small_selfplay
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${TORCH_DLLS}
+    $<TARGET_FILE_DIR:zero_13small_selfplay>)
+endif(MSVC)
+
+target_link_libraries(zero_13small_selfplay rapidjson)
+target_link_libraries(zero_13small_selfplay util)
+target_link_libraries(zero_13small_selfplay rgen)
+target_link_libraries(zero_13small_selfplay distributions)
+target_link_libraries(zero_13small_selfplay pytorch_util)
+target_link_libraries(zero_13small_selfplay game)
+target_link_libraries(zero_13small_selfplay encoders)
+target_link_libraries(zero_13small_selfplay experience)
+target_link_libraries(zero_13small_selfplay models)
+target_link_libraries(zero_13small_selfplay agents)
+
+#vs_zero_13small
+add_executable(vs_zero_13small vs_zero_9small.cpp)
+
+target_link_libraries(vs_zero_13small "${TORCH_LIBRARIES}")
+set_property(TARGET vs_zero_13small PROPERTY CXX_STANDARD 17)
+
+if (MSVC)
+  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+  add_custom_command(TARGET vs_zero_13small
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${TORCH_DLLS}
+    $<TARGET_FILE_DIR:vs_zero_13small>)
+endif(MSVC)
+
+target_link_libraries(vs_zero_13small rapidjson)
+target_link_libraries(vs_zero_13small util)
+target_link_libraries(vs_zero_13small rgen)
+target_link_libraries(vs_zero_13small distributions)
+target_link_libraries(vs_zero_13small pytorch_util)
+target_link_libraries(vs_zero_13small game)
+target_link_libraries(vs_zero_13small encoders)
+target_link_libraries(vs_zero_13small experience)
+target_link_libraries(vs_zero_13small models)
+target_link_libraries(vs_zero_13small agents)

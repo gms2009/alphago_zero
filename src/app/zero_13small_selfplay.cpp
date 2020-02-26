@@ -20,7 +20,7 @@
 #include <go_action_encoder.h>
 #include <go_zero_encoder.h>
 #include <model_base.h>
-#include <zero_model_small.h>
+#include <zero_model_resnet_small.h>
 #include <zero_agent.h>
 
 #include <torch/torch.h>
@@ -30,7 +30,7 @@ namespace c = s::chrono;
 namespace t = torch;
 namespace R = rlgames;
 
-constexpr ubyte SZ = 9;
+constexpr ubyte SZ = 13;
 
 int main(int argc, const char* argv[]){
   uint episodes = 1000;
@@ -72,8 +72,8 @@ int main(int argc, const char* argv[]){
   R::TensorDimP state_size = state_encoder.state_size();
   constexpr uint action_size = R::ZeroGoActionEncoder<SZ>::action_size();
 
-  R::ModelContainer<R::ZeroModelSmall, R::ZeroGoStateEncoder<SZ>, R::ZeroGoActionEncoder<SZ>, t::optim::Adam> model_container(
-    R::ZeroModelSmall(state_size, action_size, R::load_model_option<R::ZeroModelSmallOptions>(model_config_file)),
+  R::ModelContainer<R::ZeroModelResnetSmall, R::ZeroGoStateEncoder<SZ>, R::ZeroGoActionEncoder<SZ>, t::optim::Adam> model_container(
+    R::ZeroModelResnetSmall(state_size, action_size, R::load_model_option<R::ZeroModelResnetSmallOptions>(model_config_file)),
     s::move(state_encoder),
     s::move(action_encoder),
     1E-5F, //learning_rate

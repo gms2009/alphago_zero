@@ -107,6 +107,7 @@ private:
 
     R::Move move = R::string_to_move(input_str, SZ);
     if (move.mty == R::M::Unknown){
+      s::cout << "error: move unknown" << s::endl;
       //TODO: log error parsing input
       return;
     }

@@ -80,7 +80,7 @@ int main(int argc, const char* argv[]){
     model_container,
     device,
     3200,   /*max expansion*/
-    0.2F,   /*exploration factor*/
+    0.5F,   /*exploration factor*/
     1000.,  /*dirichlet distribution alpha*/
     0.,     /*noise factor*/
     rand()  /*random seed*/

@@ -47,7 +47,14 @@ s::string model_config;
 s::string model_params;
 s::string optimizer_params;
 
-s::string board_to_html(s::string board_str){
+s::string wrap_string(const s::string& msg){
+  s::string ret("<pre>");
+  ret += msg;
+  ret += "</pre>";
+  return ret;
+}
+
+s::string board_to_html(const s::string& board_str){
   s::string ret("<pre>");
   for (uint i = 0; i < board_str.length(); ++i){
     if (board_str[i] != '\n')
@@ -69,7 +76,7 @@ public:
       R::ZeroGoStateEncoder<SZ>(),
       R::ZeroGoActionEncoder<SZ>(),
       1E-5F),
-    mAgent(mModelContainer, mDevice, 3200, 0, 0., 0., rand()){
+    mAgent(mModelContainer, mDevice, 1200, 0, 0., 0., rand()){
 
     // setup widget
     mBoard = addWidget(s::make_unique<w::WText>(""));
@@ -78,6 +85,8 @@ public:
     mUserInput->setMaxLength(3);
     mPlayButton = addWidget(s::make_unique<w::WPushButton>("play"));
     mResetButton = addWidget(s::make_unique<w::WPushButton>("restart"));
+    addWidget(s::make_unique<w::WBreak>());
+    mStatus = addWidget(s::make_unique<w::WText>(""));
 
     mPlayButton->clicked().connect(this, &GoGameWidget::play);
     mResetButton->clicked().connect(this, &GoGameWidget::reset);
@@ -94,6 +103,7 @@ private:
   AgentType          mAgent;
 
   w::WText*       mBoard;
+  w::WText*       mStatus;
   w::WLineEdit*   mUserInput;
   w::WPushButton* mPlayButton;
   w::WPushButton* mResetButton;
@@ -101,20 +111,23 @@ private:
   void play(){
     s::string input_str = mUserInput->valueText().toUTF8();
     mUserInput->setValueText("");
+    mStatus->setText(wrap_string("processing..."));
 
     if (mGoGameState.is_over())
       return;
 
     R::Move move = R::string_to_move(input_str, SZ);
     if (move.mty == R::M::Unknown){
-      s::cout << "error: move unknown" << s::endl;
-      //TODO: log error parsing input
+      mStatus->setText(w::WString(wrap_string("invalid move input. format: E5")));
+      return;
+    }
+
+    if (not mGoGameState.is_valid_move(move)){
+      mStatus->setText(w::WString(wrap_string("move is invalid on this board. please retry")));
       return;
     }
 
     mGoGameState.apply_move(move);
-
-    display_board();
 
     R::Move agent_move = mAgent.select_move(mGoGameState);
 
